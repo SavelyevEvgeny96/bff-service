@@ -6,5 +6,5 @@ databaseChangeLog:
         - tagDatabase:
             tag: backend-001-create-table
   - include:
-      file: db.changelog/v1.0.0/2025-09-16/DATA/create_table_client_systems.sql
+      file: db.changelog\v1.0.0\2026-03-03\DATA\add_table.sql
 
