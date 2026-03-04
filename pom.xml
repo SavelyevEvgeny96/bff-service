@@ -155,23 +155,24 @@
         </dependency>
         <dependency>
             <groupId>ru.sogaz.site</groupId>
-            <artifactId>payment-api-client</artifactId>
-            <version>0.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>ru.sogaz.site</groupId>
             <artifactId>jwt-starter</artifactId>
             <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>ru.sogaz.site</groupId>
-            <artifactId>payment-receipt-api-client</artifactId>
-            <version>0.0.6</version>
+            <artifactId>logging-starter</artifactId>
+            <version>1.0.11</version>
+        </dependency>
+        <!-- API-CLIENT -->
+        <dependency>
+            <groupId>ru.sogaz.site</groupId>
+            <artifactId>short-links-api-client</artifactId>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>ru.sogaz.site</groupId>
-            <artifactId>logging-starter</artifactId>
-            <version>1.0.11</version>
+            <artifactId>ordering-api-client</artifactId>
+            <version>0.0.1</version>
         </dependency>
         <!-- Shedlock -->
         <dependency>
@@ -229,7 +230,6 @@
             <artifactId>kotlin-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <dependencyManagement>
