@@ -24,7 +24,7 @@ class AdminPaymentExceptionServiceImpl(
     private val publisher: ApplicationEventPublisher,
 ) {
     companion object {
-        const val PRODUCT_PAYMENT_EXCEPTION_IS_EMPTY = "Данное исключение по этому данному productId: %s, уже заведено"
+        const val PRODUCT_PAYMENT_EXCEPTION_IS_EMPTY = "Исключение по этому данному productId: %s, уже заведено"
         const val ERROR_SAVE_PRODUCT_PAYMENT_EXCEPTION = "Ошибка при сохранении исключения"
         const val PAYMENT_TYPE_NOT_FOUND =
             "Ошибка при поиске вида типа оплаты paymentType: %s, " +
@@ -52,7 +52,7 @@ class AdminPaymentExceptionServiceImpl(
             paymentRepo.findByType(paymentType)
                 ?: throw InnerException(getTraceId(), PAYMENT_TYPE_NOT_FOUND.format(paymentType))
 
-        if (method.id?.let { exceptionRepo.existsByProductIdAndPaymentId(productId, it) } == true) {
+        if (method.id?.let { exceptionRepo.existsByProductIdAndPaymentMethodId(productId, it) } == true) {
             throw InnerException(getTraceId(), PRODUCT_PAYMENT_EXCEPTION_IS_EMPTY.format(productId))
         }
 

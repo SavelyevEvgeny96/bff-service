@@ -8,7 +8,7 @@ interface ProductPaymentExceptionRepository : JpaRepository<ProductPaymentExcept
     /**
      * Проверка существования исключения по паре (productId, paymentId).
      */
-    fun existsByProductIdAndPaymentId(
+    fun existsByProductIdAndPaymentMethodId(
         productId: UUID,
         paymentId: UUID,
     ): Boolean
