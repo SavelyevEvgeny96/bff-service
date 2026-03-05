@@ -1,4 +1,4 @@
-package ru.sogaz.site.bff_service.model
+package ru.sogaz.site.bff.service.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -14,6 +14,7 @@ import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.Instant
 import java.util.UUID
+
 /**
  * Исключение по способам оплаты для продукта.
  *
@@ -39,8 +40,8 @@ import java.util.UUID
 @Table(
     name = "product_payment_exception",
     uniqueConstraints = [
-        UniqueConstraint(name = "uq_ppe_product_payment", columnNames = ["product_id", "payment_id"])
-    ]
+        UniqueConstraint(name = "uq_ppe_product_payment", columnNames = ["product_id", "payment_id"]),
+    ],
 )
 class ProductPaymentException(
     /**
@@ -51,8 +52,7 @@ class ProductPaymentException(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
-    var id: UUID?,
-
+    var id: UUID? = null,
     /**
      * Продукт, для которого действует исключение.
      *
@@ -61,7 +61,6 @@ class ProductPaymentException(
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id", nullable = false)
     var product: Product?,
-
     /**
      * Способ оплаты, который запрещён для указанного продукта.
      *
@@ -70,22 +69,20 @@ class ProductPaymentException(
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "payment_id", nullable = false)
     var paymentMethod: PaymentMethod?,
-
     /**
      * Дата/время создания записи (UTC-таймлайн).
      *
      * <p>Заполняется автоматически ORM при {@code INSERT}. Не изменяется при {@code UPDATE}.</p>
      */
     @CreationTimestamp
-    @Column(name = "create_date", nullable = false, updatable = false)
-    var createDate: Instant?,
-
+    @Column(name = "create_date", updatable = false)
+    var createDate: Instant? = null,
     /**
      * Дата/время последнего обновления записи (UTC-таймлайн).
      *
      * <p>Обновляется автоматически ORM при {@code UPDATE}.</p>
      */
     @UpdateTimestamp
-    @Column(name = "update_date", nullable = false)
-    var updateDate: Instant?
+    @Column(name = "update_date")
+    var updateDate: Instant? = null,
 )

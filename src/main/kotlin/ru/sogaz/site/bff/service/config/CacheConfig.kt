@@ -1,4 +1,4 @@
-package ru.sogaz.site.bff_service.config
+package ru.sogaz.site.bff.service.config
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import org.springframework.cache.CacheManager
@@ -25,7 +25,6 @@ import org.springframework.context.annotation.Configuration
 @EnableCaching
 @Configuration
 class CacheConfig {
-
     /**
      * Имена кэшей (строки), которые используются в {@code @Cacheable}.
      */
@@ -67,15 +66,18 @@ class CacheConfig {
      */
     @Bean
     fun cacheManager(): CacheManager {
-        val manager = CaffeineCacheManager(
-            Names.PRODUCTS_BY_NAME,
-            Names.PAYMENT_BY_TYPE,
-            Names.EXCLUDED_BY_PRODUCT
-        )
+        val manager =
+            CaffeineCacheManager(
+                Names.PRODUCTS_BY_NAME,
+                Names.PAYMENT_BY_TYPE,
+                Names.EXCLUDED_BY_PRODUCT,
+            )
 
         manager.setCaffeine(
-            Caffeine.newBuilder()
-                .maximumSize(10_000))
+            Caffeine
+                .newBuilder()
+                .maximumSize(10_000),
+        )
 
         return manager
     }

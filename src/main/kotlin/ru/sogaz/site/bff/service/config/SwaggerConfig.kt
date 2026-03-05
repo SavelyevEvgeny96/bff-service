@@ -1,4 +1,4 @@
-package ru.sogaz.site.bff_service.config
+package ru.sogaz.site.bff.service.config
 
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
@@ -6,9 +6,11 @@ import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+
 private const val SCHEMA = "bearer"
 private const val SECURITY_SCHEME_NAME = "bearerAuth"
 private const val BEARER_FORMAT = "JWT"
+
 @Configuration
 open class SwaggerConfig {
     @Bean

@@ -1,8 +1,8 @@
-package ru.sogaz.site.bff_service.properties
+package ru.sogaz.site.bff.service.properties
 
 import jakarta.annotation.PostConstruct
 import org.springframework.boot.context.properties.ConfigurationProperties
-import ru.sogaz.site.bff_service.loggerFor
+import ru.sogaz.site.bff.service.loggerFor
 
 /**
  * Репозиторий информации о приложении.

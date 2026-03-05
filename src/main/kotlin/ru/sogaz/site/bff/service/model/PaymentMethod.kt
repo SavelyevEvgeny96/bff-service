@@ -1,4 +1,4 @@
-package ru.sogaz.site.bff_service.model
+package ru.sogaz.site.bff.service.model
 
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -15,13 +15,13 @@ import java.time.Instant
 import java.util.UUID
 
 /**
- * Продукт/страховой продукт.
+ * Справочник способов оплаты.
  *
- * <p>Сущность описывает продукт, для которого могут действовать исключения по способам оплаты.
- * Исключения задаются через сущность {@link ProductPaymentException}, которая фиксирует запрет
- * на оплату конкретным методом для конкретного продукта.</p>
+ * <p>Сущность хранит тип способа оплаты (например, {@code CARD}, {@code SBP}) и его описание.
+ * Используется для построения доступных способов оплаты по продуктам с учетом исключений,
+ * заданных в {@link ProductPaymentException}.</p>
  *
- * <p>Таблица: {@code products}.</p>
+ * <p>Таблица: {@code payment_methods}.</p>
  *
  * <p>Жизненный цикл полей аудита:</p>
  * <ul>
@@ -30,10 +30,10 @@ import java.util.UUID
  * </ul>
  */
 @Entity
-@Table(name = "products")
-class Product(
+@Table(name = "payment_methods")
+class PaymentMethod(
     /**
-     * Уникальный идентификатор продукта.
+     * Уникальный идентификатор способа оплаты.
      *
      * <p>Генерируется на стороне ORM (UUID), используется как первичный ключ.</p>
      */
@@ -41,23 +41,20 @@ class Product(
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
     var id: UUID?,
-
     /**
-     * Код/название продукта.
+     * Тип способа оплаты.
      *
-     * <p>Семантическое имя (например {@code AccidentInsurance}, {@code SogazFlat}). В БД поле не nullable.</p>
+     * <p>Семантический код (например {@code CARD}, {@code SBP}). В БД поле не nullable.</p>
      */
-    @Column(name = "name", nullable = false)
-    var name: String,
-
+    @Column(name = "type", nullable = false)
+    var type: String,
     /**
-     * Описание продукта.
+     * Человекочитаемое описание способа оплаты.
      *
-     * <p>Человекочитаемое описание. Поле необязательное.</p>
+     * <p>Например: "Банковская карта", "СБП". Поле необязательное.</p>
      */
     @Column(name = "description")
     var description: String?,
-
     /**
      * Дата/время создания записи (UTC-таймлайн).
      *
@@ -66,7 +63,6 @@ class Product(
     @CreationTimestamp
     @Column(name = "create_date", nullable = false, updatable = false)
     var createDate: Instant?,
-
     /**
      * Дата/время последнего обновления записи (UTC-таймлайн).
      *
@@ -75,21 +71,20 @@ class Product(
     @UpdateTimestamp
     @Column(name = "update_date", nullable = false)
     var updateDate: Instant?,
-
     /**
-     * Набор исключений (запрещенных комбинаций) "продукт ↔ способ оплаты", действующих для данного продукта.
+     * Набор исключений (запрещенных комбинаций) "продукт ↔ способ оплаты", где данный способ оплаты запрещён.
      *
-     * <p>Это обратная сторона связи {@link ProductPaymentException#product}.
-     * Используется для навигации от продукта к запрещенным способам оплаты.</p>
+     * <p>Это обратная сторона связи {@link ProductPaymentException#paymentMethod}.
+     * Используется для навигации от способа оплаты к продуктам, для которых он исключён.</p>
      *
      * <p>Каскадирование и orphanRemoval включены — удаление элемента из коллекции приводит к удалению
      * соответствующей строки {@code product_payment_exception}.</p>
      */
     @OneToMany(
-        mappedBy = "product",
+        mappedBy = "paymentMethod",
         cascade = [CascadeType.ALL],
         orphanRemoval = true,
-        fetch = FetchType.LAZY
+        fetch = FetchType.LAZY,
     )
-    val paymentExceptions: MutableSet<ProductPaymentException> = mutableSetOf()
+    var productExceptions: MutableSet<ProductPaymentException> = mutableSetOf(),
 )

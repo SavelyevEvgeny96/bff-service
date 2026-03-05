@@ -1,14 +1,14 @@
-package ru.sogaz.site.bff_service.cache
+package ru.sogaz.site.bff.service.cache
 
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.cache.CacheManager
 import org.springframework.cache.caffeine.CaffeineCache
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
-import ru.sogaz.site.bff_service.config.CacheConfig
-import ru.sogaz.site.bff_service.loggerFor
-import ru.sogaz.site.bff_service.repository.PaymentMethodRepository
-import ru.sogaz.site.bff_service.repository.ProductRepository
+import ru.sogaz.site.bff.service.config.CacheConfig
+import ru.sogaz.site.bff.service.loggerFor
+import ru.sogaz.site.bff.service.repository.PaymentMethodRepository
+import ru.sogaz.site.bff.service.repository.ProductRepository
 
 /**
  * Прогрев и принудительная очистка локального кэша на старте приложения.
@@ -35,9 +35,8 @@ class CacheWarmup(
     private val cacheManager: CacheManager,
     private val productRepo: ProductRepository,
     private val paymentRepo: PaymentMethodRepository,
-    private val cacheService: CatalogCacheService
+    private val cacheService: CatalogCacheService,
 ) {
-
     /**
      * Обработчик события готовности приложения.
      *
@@ -80,9 +79,12 @@ class CacheWarmup(
 
         log.info(
             "Cache sizes: {}={}, {}={}, {}={}",
-            CacheConfig.Names.PRODUCTS_BY_NAME, sizeOf(CacheConfig.Names.PRODUCTS_BY_NAME),
-            CacheConfig.Names.PAYMENT_BY_TYPE, sizeOf(CacheConfig.Names.PAYMENT_BY_TYPE),
-            CacheConfig.Names.EXCLUDED_BY_PRODUCT, sizeOf(CacheConfig.Names.EXCLUDED_BY_PRODUCT)
+            CacheConfig.Names.PRODUCTS_BY_NAME,
+            sizeOf(CacheConfig.Names.PRODUCTS_BY_NAME),
+            CacheConfig.Names.PAYMENT_BY_TYPE,
+            sizeOf(CacheConfig.Names.PAYMENT_BY_TYPE),
+            CacheConfig.Names.EXCLUDED_BY_PRODUCT,
+            sizeOf(CacheConfig.Names.EXCLUDED_BY_PRODUCT),
         )
     }
 

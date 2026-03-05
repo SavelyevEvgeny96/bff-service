@@ -123,7 +123,7 @@
         <!-- Для Kotlin тестов -->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test</artifactId>
+            <artifactId>kotlin-test-junit</artifactId>
             <version>1.9.25</version>
             <scope>test</scope>
         </dependency>

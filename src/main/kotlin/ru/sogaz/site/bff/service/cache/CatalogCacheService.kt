@@ -1,13 +1,13 @@
-package ru.sogaz.site.bff_service.cache
+package ru.sogaz.site.bff.service.cache
 
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
-import ru.sogaz.site.bff_service.config.CacheConfig
-import ru.sogaz.site.bff_service.model.PaymentMethod
-import ru.sogaz.site.bff_service.model.Product
-import ru.sogaz.site.bff_service.repository.PaymentMethodRepository
-import ru.sogaz.site.bff_service.repository.ProductPaymentExceptionRepository
-import ru.sogaz.site.bff_service.repository.ProductRepository
+import ru.sogaz.site.bff.service.config.CacheConfig
+import ru.sogaz.site.bff.service.model.PaymentMethod
+import ru.sogaz.site.bff.service.model.Product
+import ru.sogaz.site.bff.service.repository.PaymentMethodRepository
+import ru.sogaz.site.bff.service.repository.ProductPaymentExceptionRepository
+import ru.sogaz.site.bff.service.repository.ProductRepository
 import java.util.UUID
 
 /**
@@ -33,9 +33,8 @@ import java.util.UUID
 class CatalogCacheService(
     private val productRepo: ProductRepository,
     private val paymentRepo: PaymentMethodRepository,
-    private val exceptionRepo: ProductPaymentExceptionRepository
+    private val exceptionRepo: ProductPaymentExceptionRepository,
 ) {
-
     /**
      * Получить продукт по имени (name) с кэшированием.
      *
@@ -47,8 +46,7 @@ class CatalogCacheService(
      * @throws IllegalArgumentException если продукт не найден.
      */
     @Cacheable(cacheNames = [CacheConfig.Names.PRODUCTS_BY_NAME], key = "#name")
-    fun productByName(name: String): Product =
-        productRepo.findByName(name) ?: throw IllegalArgumentException("Product not found: $name")
+    fun productByName(name: String): Product = productRepo.findByName(name) ?: throw IllegalArgumentException("Product not found: $name")
 
     /**
      * Получить способ оплаты по типу (type) с кэшированием.
@@ -77,7 +75,8 @@ class CatalogCacheService(
      */
     @Cacheable(cacheNames = [CacheConfig.Names.EXCLUDED_BY_PRODUCT], key = "#productId")
     fun excludedPaymentTypes(productId: UUID): Set<String> =
-        exceptionRepo.findAllByProductId(productId)
+        exceptionRepo
+            .findAllByProductId(productId)
             .mapNotNull { it.paymentMethod?.type }
             .toSet()
 }
