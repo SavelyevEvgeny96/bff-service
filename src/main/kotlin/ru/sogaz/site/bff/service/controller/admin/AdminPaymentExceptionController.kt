@@ -1,4 +1,4 @@
-package ru.sogaz.site.bff.service.controller
+package ru.sogaz.site.bff.service.controller.admin
 
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
