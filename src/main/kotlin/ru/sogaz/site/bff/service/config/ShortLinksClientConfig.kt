@@ -2,8 +2,8 @@ package ru.sogaz.site.bff.service.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import ru.sogaz.site.payment.client.api.ShortLinkControllerApi
-import ru.sogaz.site.payment.client.invoker.ApiClient
+import ru.sogaz.site.shortlinks.client.api.ShortLinkControllerApi
+import ru.sogaz.site.shortlinks.client.invoker.ApiClient
 
 @Configuration
 class ShortLinksClientConfig {
