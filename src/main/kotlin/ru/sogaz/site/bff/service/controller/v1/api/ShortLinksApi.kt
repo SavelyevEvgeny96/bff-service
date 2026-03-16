@@ -1,4 +1,4 @@
-package ru.sogaz.site.bff.service.api
+package ru.sogaz.site.bff.service.controller.v1.api
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
