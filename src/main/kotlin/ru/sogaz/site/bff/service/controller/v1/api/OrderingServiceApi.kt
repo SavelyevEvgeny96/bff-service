@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.Parameters
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import ru.sogaz.site.bff.service.constraint.ValidUUID
 import ru.sogaz.site.bff.service.dto.request.PayQueryParams
 import ru.sogaz.site.ordering.client.model.ResponseDataOrderPaymentPageInfo
-import java.util.UUID
 
 /**
  * API для работы с сервисом заказов.
@@ -20,6 +22,7 @@ import java.util.UUID
     name = "Ordering Service API",
     description = "API для получения информации по заказу по id  заказа",
 )
+@Validated
 @RequestMapping("/v1")
 interface OrderingServiceApi {
     /**
@@ -32,15 +35,28 @@ interface OrderingServiceApi {
         description = "Возвращает ссылку для оплаты картой и, если возможно оплатить по СБП, QR-code для оплаты по СБП",
     )
     @Parameters(
-        Parameter(name = "orderId", description = "UUID заказа для оплаты", required = true, schema = Schema(type = "string")),
+        Parameter(
+            name = "orderId",
+            description = "UUID заказа для оплаты",
+            required = true,
+            schema = Schema(type = "string")
+        ),
         Parameter(
             name = "urlToReturn",
             description = "Ссылка для редиректа после успешной оплаты",
             example = "http://www.sogaz.ru",
             schema = Schema(type = "string"),
         ),
-        Parameter(name = "urlToReturnS", description = "Ссылка для редиректа после успешной оплаты", schema = Schema(type = "string")),
-        Parameter(name = "urlToReturnF", description = "Ссылка для редиректа после неуспешной оплаты", schema = Schema(type = "string")),
+        Parameter(
+            name = "urlToReturnS",
+            description = "Ссылка для редиректа после успешной оплаты",
+            schema = Schema(type = "string")
+        ),
+        Parameter(
+            name = "urlToReturnF",
+            description = "Ссылка для редиректа после неуспешной оплаты",
+            schema = Schema(type = "string")
+        ),
         Parameter(
             name = "depersonalization",
             description = "Флаг необходимости анонимизированной оплаты",
@@ -48,11 +64,11 @@ interface OrderingServiceApi {
             schema = Schema(type = "string"),
         ),
     )
-    @GetMapping("/pagepayinfo/{orderId}")
+    @GetMapping("/pagepayinfo")
     fun getInfoPage(
-        orderId: UUID,
-        payQueryParams: PayQueryParams,
-        saveCard: Boolean,
-        unifiedId: String?,
+        @RequestParam(required = false) @ValidUUID orderId: String,
+        payQueryParams: PayQueryParams?,
+        saveCard: Boolean?,
+        unifiedId: String?
     ): ResponseDataOrderPaymentPageInfo?
 }
