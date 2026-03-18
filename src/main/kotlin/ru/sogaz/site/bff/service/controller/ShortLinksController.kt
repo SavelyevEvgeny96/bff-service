@@ -3,8 +3,6 @@ package ru.sogaz.site.bff.service.controller
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.view.RedirectView
 import ru.sogaz.site.bff.service.controller.v1.api.ShortLinksApi
-import ru.sogaz.site.exceptionStarter.starter.dto.exceptions.BusinessException
-import ru.sogaz.site.exceptionStarter.starter.dto.exceptions.ValidationException
 import ru.sogaz.site.shortlinks.client.api.ShortLinkControllerApi
 import kotlin.collections.get
 

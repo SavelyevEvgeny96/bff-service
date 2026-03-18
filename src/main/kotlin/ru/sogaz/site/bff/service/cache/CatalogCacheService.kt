@@ -46,7 +46,7 @@ class CatalogCacheService(
      * @throws IllegalArgumentException если продукт не найден.
      */
     @Cacheable(cacheNames = [CacheConfig.Names.PRODUCTS_BY_NAME], key = "#name")
-    fun productByName(name: String): Product = productRepo.findByName(name) ?: throw IllegalArgumentException("Product not found: $name")
+    fun productByName(name: String?): Product = productRepo.findByName(name) ?: throw IllegalArgumentException("Product not found: $name")
 
     /**
      * Получить способ оплаты по типу (type) с кэшированием.
@@ -59,7 +59,7 @@ class CatalogCacheService(
      * @throws IllegalArgumentException если способ оплаты не найден.
      */
     @Cacheable(cacheNames = [CacheConfig.Names.PAYMENT_BY_TYPE], key = "#type")
-    fun paymentByType(type: String): PaymentMethod =
+    fun paymentByType(type: String?): PaymentMethod =
         paymentRepo.findByType(type) ?: throw IllegalArgumentException("Payment method not found: $type")
 
     /**

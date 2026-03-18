@@ -5,5 +5,5 @@ import ru.sogaz.site.bff.service.model.PaymentMethod
 import java.util.UUID
 
 interface PaymentMethodRepository : JpaRepository<PaymentMethod, UUID> {
-    fun findByType(type: String): PaymentMethod?
+    fun findByType(type: String?): PaymentMethod?
 }

@@ -40,14 +40,14 @@ class PaymentMethod(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
-    var id: UUID?,
+    var id: UUID? = null,
     /**
      * Тип способа оплаты.
      *
      * <p>Семантический код (например {@code CARD}, {@code SBP}). В БД поле не nullable.</p>
      */
     @Column(name = "type", nullable = false)
-    var type: String,
+    var type: String?,
     /**
      * Человекочитаемое описание способа оплаты.
      *
@@ -62,7 +62,7 @@ class PaymentMethod(
      */
     @CreationTimestamp
     @Column(name = "create_date", nullable = false, updatable = false)
-    var createDate: Instant?,
+    var createDate: Instant? = null,
     /**
      * Дата/время последнего обновления записи (UTC-таймлайн).
      *
@@ -70,7 +70,7 @@ class PaymentMethod(
      */
     @UpdateTimestamp
     @Column(name = "update_date", nullable = false)
-    var updateDate: Instant?,
+    var updateDate: Instant? = null,
     /**
      * Набор исключений (запрещенных комбинаций) "продукт ↔ способ оплаты", где данный способ оплаты запрещён.
      *

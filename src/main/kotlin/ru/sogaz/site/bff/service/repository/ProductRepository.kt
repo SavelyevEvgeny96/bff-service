@@ -5,5 +5,5 @@ import ru.sogaz.site.bff.service.model.Product
 import java.util.UUID
 
 interface ProductRepository : JpaRepository<Product, UUID> {
-    fun findByName(name: String): Product?
+    fun findByName(name: String?): Product?
 }

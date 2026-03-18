@@ -40,14 +40,14 @@ class Product(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
-    var id: UUID?,
+    var id: UUID? = null,
     /**
      * Код/название продукта.
      *
      * <p>Семантическое имя (например {@code AccidentInsurance}, {@code SogazFlat}). В БД поле не nullable.</p>
      */
     @Column(name = "name", nullable = false)
-    var name: String,
+    var name: String?,
     /**
      * Описание продукта.
      *
@@ -62,7 +62,7 @@ class Product(
      */
     @CreationTimestamp
     @Column(name = "create_date", nullable = false, updatable = false)
-    var createDate: Instant?,
+    var createDate: Instant? = null,
     /**
      * Дата/время последнего обновления записи (UTC-таймлайн).
      *
@@ -70,7 +70,7 @@ class Product(
      */
     @UpdateTimestamp
     @Column(name = "update_date", nullable = false)
-    var updateDate: Instant?,
+    var updateDate: Instant? = null,
     /**
      * Набор исключений (запрещенных комбинаций) "продукт ↔ способ оплаты", действующих для данного продукта.
      *

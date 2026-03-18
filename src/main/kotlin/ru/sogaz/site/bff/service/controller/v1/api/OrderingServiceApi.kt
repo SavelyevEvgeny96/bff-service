@@ -39,7 +39,7 @@ interface OrderingServiceApi {
             name = "orderId",
             description = "UUID заказа для оплаты",
             required = true,
-            schema = Schema(type = "string")
+            schema = Schema(type = "string"),
         ),
         Parameter(
             name = "urlToReturn",
@@ -50,12 +50,12 @@ interface OrderingServiceApi {
         Parameter(
             name = "urlToReturnS",
             description = "Ссылка для редиректа после успешной оплаты",
-            schema = Schema(type = "string")
+            schema = Schema(type = "string"),
         ),
         Parameter(
             name = "urlToReturnF",
             description = "Ссылка для редиректа после неуспешной оплаты",
-            schema = Schema(type = "string")
+            schema = Schema(type = "string"),
         ),
         Parameter(
             name = "depersonalization",
@@ -69,6 +69,6 @@ interface OrderingServiceApi {
         @RequestParam(required = false) @ValidUUID orderId: String,
         payQueryParams: PayQueryParams?,
         saveCard: Boolean?,
-        unifiedId: String?
+        unifiedId: String?,
     ): ResponseDataOrderPaymentPageInfo?
 }
