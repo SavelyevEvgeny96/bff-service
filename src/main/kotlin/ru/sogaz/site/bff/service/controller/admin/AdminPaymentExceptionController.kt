@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController
 import ru.sogaz.site.bff.service.dto.request.CreatePaymentExceptionRequest
 import ru.sogaz.site.bff.service.dto.response.CreatePaymentExceptionResponse
 import ru.sogaz.site.bff.service.service.AdminPaymentExceptionServiceImpl
+import ru.sogaz.site.filterStarter.services.RequestInfo.getTraceId
+import ru.sogaz.siter.models.resonses.Response
+import ru.sogaz.siter.models.resonses.getSuccessResponse
 import java.util.UUID
 
 /**
@@ -21,6 +24,10 @@ import java.util.UUID
 class AdminPaymentExceptionController(
     private val service: AdminPaymentExceptionServiceImpl,
 ) {
+    companion object {
+        const val CODE_SUCCESS = 1101543201
+    }
+
     /**
      * Создать исключение: запретить оплату продукту указанным paymentType.
      *
@@ -31,8 +38,12 @@ class AdminPaymentExceptionController(
     fun create(
         @PathVariable productId: UUID,
         @RequestBody @Valid request: CreatePaymentExceptionRequest,
-    ): CreatePaymentExceptionResponse {
+    ): Response<CreatePaymentExceptionResponse> {
         val id = service.createException(productId, request.paymentType.trim())
-        return CreatePaymentExceptionResponse(id.toString())
+        return getSuccessResponse(
+            getTraceId(),
+            CODE_SUCCESS,
+            CreatePaymentExceptionResponse(id.toString())
+        )
     }
 }
