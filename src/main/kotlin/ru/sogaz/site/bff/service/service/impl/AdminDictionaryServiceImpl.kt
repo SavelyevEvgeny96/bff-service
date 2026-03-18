@@ -38,7 +38,6 @@ class AdminDictionaryServiceImpl(
     private val productRepository: ProductRepository,
     private val paymentMethodRepository: PaymentMethodRepository,
 ) : AdminDictionaryService {
-
     /**
      * Добавляет элементы справочника из входного запроса.
      *
@@ -51,17 +50,18 @@ class AdminDictionaryServiceImpl(
      * @param request запрос на добавление элементов справочника
      * @return список элементов, найденных или созданных в базе данных
      */
-    override fun add(request: AdminAddRequest): List<ItemResponse?> {
-        return request.list.map { item ->
+    override fun add(request: AdminAddRequest): List<ItemResponse?> =
+        request.list.map { item ->
             when (item.type) {
                 AdminDictionaryElementType.PRODUCT.name -> {
-                    val product = productRepository.findByName(item.name)
-                        ?: productRepository.save(
-                            Product(
-                                name = item.name,
-                                description = item.description,
+                    val product =
+                        productRepository.findByName(item.name)
+                            ?: productRepository.save(
+                                Product(
+                                    name = item.name,
+                                    description = item.description,
+                                ),
                             )
-                        )
 
                     ItemResponse(
                         id = product.id.toString(),
@@ -71,13 +71,14 @@ class AdminDictionaryServiceImpl(
                 }
 
                 AdminDictionaryElementType.PAYMENT_METHOD.name -> {
-                    val payment = paymentMethodRepository.findByType(item.name)
-                        ?: paymentMethodRepository.save(
-                            PaymentMethod(
-                                type = item.name,
-                                description = item.description,
+                    val payment =
+                        paymentMethodRepository.findByType(item.name)
+                            ?: paymentMethodRepository.save(
+                                PaymentMethod(
+                                    type = item.name,
+                                    description = item.description,
+                                ),
                             )
-                        )
 
                     ItemResponse(
                         id = payment.id.toString(),
@@ -88,5 +89,4 @@ class AdminDictionaryServiceImpl(
                 else -> null
             }
         }
-    }
 }

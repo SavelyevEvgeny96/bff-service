@@ -10,6 +10,8 @@ import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.Fetch
+import org.hibernate.annotations.FetchMode
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.Instant
 import java.util.UUID
@@ -86,5 +88,6 @@ class PaymentMethod(
         orphanRemoval = true,
         fetch = FetchType.LAZY,
     )
+    @Fetch(FetchMode.SUBSELECT)
     var productExceptions: MutableSet<ProductPaymentException> = mutableSetOf(),
 )
