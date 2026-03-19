@@ -1,6 +1,6 @@
 spring:
   application:
-    name: bff-service
+    name: bff-invoice-service
   profiles:
     active: ${ENVIRONMENT:local}
     datasource:
