@@ -1,13 +1,13 @@
 spring:
   application:
-    name: bff-invoice-service
+    name: bff-payment-service
   profiles:
     active: ${ENVIRONMENT:local}
     datasource:
       driver-class-name: org.postgresql.Driver
-      url: ${DB_URL:jdbc:postgresql://localhost:5432/bff}
-      username: ${DB_USERNAME:postgres}
-      password: ${DB_PASSWORD:123456}
+      url: ${DB_URL:}
+      username: ${DB_USERNAME:}
+      password: ${DB_PASSWORD:}
     liquibase:
       change-log: db.changelog/db.changelog-master.yaml
       enabled: true
@@ -32,10 +32,10 @@ spring:
 
   app:
     info:
-      application_name: ${PROJECT_NAME:BFF Service}
+      application_name: ${PROJECT_NAME:BFF payment service}
       version: ${PROJECT_VERSION:1.0.0}
-      description: ${PROJECT_DESCRIPTION:BFF Service}
-      artifact_Id: ${PROJECT_ARTIFACTID:bff-service}
+      description: ${PROJECT_DESCRIPTION:BFF payment service}
+      artifact_Id: ${PROJECT_ARTIFACTID:bff-payment-service}
       group_Id: ${PROJECT_GROUPID:ru.sogaz.site}
       app_profile: ${ENVIRONMENT:local}
       java-version: ${JAVA_VERSION:21}
