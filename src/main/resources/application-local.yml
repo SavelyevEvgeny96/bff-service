@@ -16,6 +16,10 @@ logstash:
   level: INFO
   level_local: INFO
 
+api:
+  ordering:
+    basePath: ${ORDERING_BASE_PATH:http://localhost:8080}
+
 management:
   endpoints:
     web:

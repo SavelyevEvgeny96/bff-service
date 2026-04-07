@@ -42,6 +42,10 @@ app:
     app_profile: ${ENVIRONMENT:local}
     java-version: ${JAVA_VERSION:21}
 
+api:
+  ordering:
+    basePath: ${ORDERING_BASE_PATH:https://s00-0000-k835.sogaz.ru/test/invoice-service}
+
 management:
   endpoints:
     web:

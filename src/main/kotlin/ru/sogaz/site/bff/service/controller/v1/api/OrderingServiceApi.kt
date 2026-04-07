@@ -7,11 +7,14 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import ru.sogaz.site.bff.service.constraint.ValidUUID
 import ru.sogaz.site.bff.service.dto.request.PayQueryParams
 import ru.sogaz.site.ordering.client.model.ResponseDataOrderPaymentPageInfo
+import ru.sogaz.site.ordering.client.model.ResponseInvoiceMetaInfo
+import java.util.UUID
 
 /**
  * API для работы с сервисом заказов.
@@ -61,6 +64,18 @@ interface OrderingServiceApi {
             name = "depersonalization",
             description = "Флаг необходимости анонимизированной оплаты",
             example = "true",
+            schema = Schema(type = "boolean"),
+        ),
+        Parameter(
+            name = "channelSale",
+            description = "Канал продажи",
+            example = "true",
+            schema = Schema(type = "string"),
+        ),
+        Parameter(
+            name = "payerIP",
+            description = "IP плательщика",
+            example = "true",
             schema = Schema(type = "string"),
         ),
     )
@@ -68,7 +83,17 @@ interface OrderingServiceApi {
     fun getInfoPage(
         @RequestParam(required = false) @ValidUUID orderId: String,
         payQueryParams: PayQueryParams?,
+        channelSale: String?,
+        payerIP: String?,
         saveCard: Boolean?,
         unifiedId: String?,
     ): ResponseDataOrderPaymentPageInfo?
+
+    /**
+     * Получение информации для отображения на платежной странице.
+     *
+     * @param invoiceId id заказа
+     */
+    @GetMapping("/pagepayinfo/info/{invoiceId}")
+    fun getStatusInfoPage(@PathVariable invoiceId: UUID): ResponseInvoiceMetaInfo?
 }
