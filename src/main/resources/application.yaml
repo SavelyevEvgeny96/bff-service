@@ -14,15 +14,6 @@ spring:
   output:
     ansi:
       enabled: ALWAYS
-  rabbitmq:
-    host: ${RABBIT_HOST:localhost}
-    port: 5672
-    username: ${RABBIT_USERNAME:dev}
-    password: ${RABBIT_PASSWORD:dev}
-    virtual-host: /
-    listener:
-      simple:
-        acknowledge-mode: auto
   jackson:
     serialization:
       write-dates-as-timestamps: false
