@@ -142,7 +142,7 @@
         <dependency>
             <groupId>ru.sogaz.site</groupId>
             <artifactId>exception-starter</artifactId>
-            <version>1.0.114</version>
+            <version>1.0.121-dev</version>
         </dependency>
         <dependency>
             <groupId>ru.sogaz.site</groupId>
@@ -168,7 +168,7 @@
         <dependency>
             <groupId>ru.sogaz.site</groupId>
             <artifactId>ordering-api-client</artifactId>
-            <version>0.0.7-dev</version>
+            <version>0.0.8-dev</version>
         </dependency>
         <!-- Shedlock -->
         <dependency>
