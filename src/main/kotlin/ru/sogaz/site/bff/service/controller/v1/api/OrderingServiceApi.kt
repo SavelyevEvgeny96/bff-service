@@ -14,6 +14,7 @@ import ru.sogaz.site.bff.service.constraint.ValidUUID
 import ru.sogaz.site.bff.service.dto.request.PayQueryParams
 import ru.sogaz.site.ordering.client.model.ResponseDataOrderPaymentPageInfo
 import ru.sogaz.site.ordering.client.model.ResponseInvoiceMetaInfo
+import ru.sogaz.site.ordering.client.model.ResponseInvoicePayPageInfo
 import java.util.UUID
 
 /**
@@ -31,7 +32,7 @@ interface OrderingServiceApi {
     /**
      * Получение информации для отображения на платежной странице.
      *
-     * @param orderId id заказа
+     * @param invoiceId id заказа
      */
     @Operation(
         summary = "Информация о способах оплаты заказа",
@@ -39,10 +40,10 @@ interface OrderingServiceApi {
     )
     @Parameters(
         Parameter(
-            name = "orderId",
+            name = "invoiceId",
             description = "UUID заказа для оплаты",
             required = true,
-            schema = Schema(type = "string"),
+            schema = Schema(type = "string", format = "uuid"),
         ),
         Parameter(
             name = "urlToReturn",
@@ -81,13 +82,13 @@ interface OrderingServiceApi {
     )
     @GetMapping("/pagepayinfo")
     fun getInfoPage(
-        @RequestParam(required = false) @ValidUUID orderId: String,
+        @RequestParam(required = false) invoiceId: UUID,
         payQueryParams: PayQueryParams?,
         channelSale: String?,
         payerIP: String?,
         saveCard: Boolean?,
         unifiedId: String?,
-    ): ResponseDataOrderPaymentPageInfo?
+    ): ResponseInvoicePayPageInfo?
 
     /**
      * Получение информации для отображения на платежной странице.
