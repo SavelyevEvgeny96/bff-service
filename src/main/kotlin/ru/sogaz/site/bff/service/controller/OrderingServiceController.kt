@@ -6,12 +6,9 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.HttpClientErrorException
 import ru.sogaz.site.bff.service.controller.v1.api.OrderingServiceApi
 import ru.sogaz.site.bff.service.dto.request.PayQueryParams
-import ru.sogaz.site.bff.service.loggerFor
 import ru.sogaz.site.bff.service.service.impl.InvoiceStandardisationServiceImpl
 import ru.sogaz.site.exceptionStarter.starter.dto.exceptions.BusinessException
 import ru.sogaz.site.ordering.client.api.InvoicePayPageInfoControllerApi
-import ru.sogaz.site.ordering.client.api.PaymentPageInfoControllerApi
-import ru.sogaz.site.ordering.client.model.ResponseDataOrderPaymentPageInfo
 import ru.sogaz.site.ordering.client.model.ResponseInvoiceMetaInfo
 import ru.sogaz.site.ordering.client.model.ResponseInvoicePayPageInfo
 import ru.sogaz.siter.models.resonses.Response
