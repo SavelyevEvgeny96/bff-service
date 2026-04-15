@@ -42,7 +42,7 @@ class OrderingServiceController(
                 payerIP,
                 saveCard,
                 unifiedId,
-            )
+            ).run(invoiceStandardisationServiceImpl::standardize)
         } catch (ex: HttpClientErrorException.Conflict) {
             throw BusinessException(ex.getResponse().code)
         }
