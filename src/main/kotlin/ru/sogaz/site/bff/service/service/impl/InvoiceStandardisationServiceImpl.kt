@@ -5,12 +5,11 @@ import ru.sogaz.site.bff.service.enums.InsuranceKind
 import ru.sogaz.site.bff.service.service.InvoiceStandardisationService
 import ru.sogaz.site.ordering.client.model.InvoiceAccountData
 import ru.sogaz.site.ordering.client.model.InvoiceMetaAccount
-import ru.sogaz.site.ordering.client.model.InvoiceMetaInfo
 import ru.sogaz.site.ordering.client.model.ResponseInvoiceMetaInfo
 import ru.sogaz.site.ordering.client.model.ResponseInvoicePayPageInfo
 
 @Service
-class InvoiceStandardisationServiceImpl: InvoiceStandardisationService {
+class InvoiceStandardisationServiceImpl : InvoiceStandardisationService {
     override fun standardize(response: ResponseInvoicePayPageInfo): ResponseInvoicePayPageInfo =
         response.apply {
             data?.accounts?.forEach(::standardize)
