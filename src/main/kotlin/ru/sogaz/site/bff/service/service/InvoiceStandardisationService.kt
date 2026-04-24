@@ -5,5 +5,6 @@ import ru.sogaz.site.ordering.client.model.ResponseInvoicePayPageInfo
 
 interface InvoiceStandardisationService {
     fun standardize(response: ResponseInvoicePayPageInfo): ResponseInvoicePayPageInfo
+
     fun standardize(response: ResponseInvoiceMetaInfo): ResponseInvoiceMetaInfo
 }

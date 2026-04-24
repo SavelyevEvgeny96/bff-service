@@ -4,5 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties(prefix = "api.ordering")
 class OrderingApiProperties(
-    val basePath: String
+    val basePath: String,
+    val paySuffix: String,
 )

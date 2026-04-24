@@ -45,6 +45,7 @@ app:
 api:
   ordering:
     basePath: ${ORDERING_BASE_PATH:https://s00-0000-k835.sogaz.ru/test/invoice-service}
+    paySuffix: ${PAY_SUFFIX:pay}
 
 management:
   endpoints:
