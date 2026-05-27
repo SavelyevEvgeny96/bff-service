@@ -72,6 +72,8 @@ management:
       enable: true
 
 logging:
+  proxy:
+    log-headers: ${LOGGING_PROXY_LOG_HEADERS:TRUE}
   level:
     org.springframework.jdbc: ${LOG_JDBC_LEVEL:INFO}
     org.springframework.transaction: ${LOG_TRANSACTION_LEVEL:INFO}
