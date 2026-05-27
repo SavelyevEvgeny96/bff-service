@@ -18,7 +18,7 @@ logstash:
 
 api:
   ordering:
-    basePath: ${ORDERING_BASE_PATH:http://localhost:8080}
+    basePath: ${ORDERING_BASE_PATH:https://s00-0000-k835.sogaz.ru/test/invoice-service}
 
 management:
   endpoints:

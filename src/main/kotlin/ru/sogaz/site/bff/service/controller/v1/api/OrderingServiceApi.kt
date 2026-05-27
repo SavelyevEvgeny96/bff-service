@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
-import ru.sogaz.site.bff.service.constraint.ValidUUID
 import ru.sogaz.site.bff.service.dto.request.PayQueryParams
-import ru.sogaz.site.ordering.client.model.ResponseDataOrderPaymentPageInfo
 import ru.sogaz.site.ordering.client.model.ResponseInvoiceMetaInfo
 import ru.sogaz.site.ordering.client.model.ResponseInvoicePayPageInfo
 import java.util.UUID
@@ -96,5 +94,7 @@ interface OrderingServiceApi {
      * @param invoiceId id заказа
      */
     @GetMapping("/pagepayinfo/info/{invoiceId}")
-    fun getStatusInfoPage(@PathVariable invoiceId: UUID): ResponseInvoiceMetaInfo?
+    fun getStatusInfoPage(
+        @PathVariable invoiceId: UUID,
+    ): ResponseInvoiceMetaInfo?
 }
