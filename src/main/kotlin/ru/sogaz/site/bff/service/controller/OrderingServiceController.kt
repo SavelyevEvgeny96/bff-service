@@ -75,19 +75,24 @@ class OrderingServiceController(
 
     private fun buildPayerIp(
         originalForwardedForIp: String?,
-        xRealIp: String?,
+        xRealIp: String?
     ): String? {
-        val ip1 = originalForwardedForIp?.trim()
-        val ip2 = xRealIp?.trim()
 
-        return when {
-            ip1.isNullOrEmpty() && ip2.isNullOrEmpty() -> null
-            ip1 == ip2 -> ip1
-            ip1.isNullOrEmpty() -> ip2
-            ip2.isNullOrEmpty() -> ip1
-            else -> "$ip1,$ip2"
-        }
+        fun extractIps(raw: String?): List<String> =
+            raw
+                ?.split(",")
+                ?.map { it.trim() }
+                ?.filter { it.isNotEmpty() }
+                ?: emptyList()
+
+        val forwardedIps = extractIps(originalForwardedForIp)
+        val realIps = extractIps(xRealIp)
+
+        val uniqueIps = (forwardedIps + realIps).distinct()
+
+        return uniqueIps.takeIf { it.isNotEmpty() }?.joinToString(",")
     }
 
-    private fun HttpClientErrorException.Conflict.getResponse(): Response<Any> = objectMapper.readValue(responseBodyAsString)
+    private fun HttpClientErrorException.Conflict.getResponse(): Response<Any> =
+        objectMapper.readValue(responseBodyAsString)
 }
