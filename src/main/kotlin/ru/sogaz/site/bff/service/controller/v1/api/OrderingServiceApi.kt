@@ -3,11 +3,13 @@ package ru.sogaz.site.bff.service.controller.v1.api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.Parameters
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import ru.sogaz.site.bff.service.dto.request.PayQueryParams
@@ -27,6 +29,11 @@ import java.util.UUID
 @Validated
 @RequestMapping("/v1")
 interface OrderingServiceApi {
+    companion object {
+        const val ORIGINAL_FORWARDED_FOR_HEADER = "x-original-forwarded-for"
+        const val X_REAL_IP = "x-real-ip"
+    }
+
     /**
      * Получение информации для отображения на платежной странице.
      *
@@ -80,10 +87,25 @@ interface OrderingServiceApi {
     )
     @GetMapping("/pagepayinfo")
     fun getInfoPage(
+        @Parameter(
+            name = ORIGINAL_FORWARDED_FOR_HEADER,
+            description = "IP пользователя из заголовка",
+            `in` = ParameterIn.HEADER,
+            required = false,
+        )
+        @RequestHeader(name = ORIGINAL_FORWARDED_FOR_HEADER, required = false)
+        originalForwardedForIp: String?,
+        @RequestHeader(name = X_REAL_IP, required = false)
+        xRealIp: String?,
+        @Parameter(
+            name = X_REAL_IP,
+            description = "IP пользователя из заголовка",
+            `in` = ParameterIn.HEADER,
+            required = false,
+        )
         @RequestParam(required = false) invoiceId: UUID,
         payQueryParams: PayQueryParams?,
         channelSale: String?,
-        payerIP: String?,
         saveCard: Boolean?,
         unifiedId: String?,
     ): ResponseInvoicePayPageInfo?

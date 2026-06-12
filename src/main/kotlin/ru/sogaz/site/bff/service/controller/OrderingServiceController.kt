@@ -32,10 +32,11 @@ class OrderingServiceController(
     }
 
     override fun getInfoPage(
+        originalForwardedForIp: String?,
+        xRealIp: String?,
         invoiceId: UUID,
         payQueryParams: PayQueryParams?,
         channelSale: String?,
-        payerIP: String?,
         saveCard: Boolean?,
         unifiedId: String?,
     ): ResponseInvoicePayPageInfo? =
@@ -48,7 +49,7 @@ class OrderingServiceController(
                     payQueryParams?.urlToReturnF,
                     payQueryParams?.depersonalization,
                     channelSale,
-                    payerIP,
+                    buildPayerIp(originalForwardedForIp, xRealIp),
                     saveCard,
                     unifiedId,
                 ).run(invoiceStandardisationServiceImpl::standardize)
@@ -71,6 +72,22 @@ class OrderingServiceController(
             .run(invoiceStandardisationServiceImpl::standardize)
 
     private fun String.replacePayBankHost(): String = replace(DMZ, paySuffix)
+
+    private fun buildPayerIp(
+        originalForwardedForIp: String?,
+        xRealIp: String?,
+    ): String? {
+        val ip1 = originalForwardedForIp?.trim()
+        val ip2 = xRealIp?.trim()
+
+        return when {
+            ip1.isNullOrEmpty() && ip2.isNullOrEmpty() -> null
+            ip1 == ip2 -> ip1
+            ip1.isNullOrEmpty() -> ip2
+            ip2.isNullOrEmpty() -> ip1
+            else -> "$ip1,$ip2"
+        }
+    }
 
     private fun HttpClientErrorException.Conflict.getResponse(): Response<Any> = objectMapper.readValue(responseBodyAsString)
 }
