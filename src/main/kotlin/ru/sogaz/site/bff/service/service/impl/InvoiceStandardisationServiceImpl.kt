@@ -1,3 +1,4 @@
+package ru.sogaz.site.bff.service.service.impl
 import org.springframework.stereotype.Service
 import ru.sogaz.site.bff.service.enums.InsuranceKind
 import ru.sogaz.site.bff.service.service.InvoiceStandardisationService
@@ -15,10 +16,12 @@ class InvoiceStandardisationServiceImpl : InvoiceStandardisationService {
     override fun standardize(response: ResponseInvoicePayPageInfo): ResponseInvoicePayPageInfo =
         response.apply {
             data?.accounts?.forEach(::standardize)
-            data?.urlPayBank = data?.urlPayBank
-                ?.toString()
-                ?.let(::standardizeUrlPayBank)
-                ?.let(URI::create)!!
+            data?.urlPayBank =
+                data
+                    ?.urlPayBank
+                    ?.toString()
+                    ?.let(::standardizeUrlPayBank)
+                    ?.let(URI::create)!!
         }
 
     override fun standardize(response: ResponseInvoiceMetaInfo): ResponseInvoiceMetaInfo =
@@ -36,8 +39,7 @@ class InvoiceStandardisationServiceImpl : InvoiceStandardisationService {
             insuranceKind = getInsuranceName(insuranceKind)
         }
 
-    private fun getInsuranceName(insuranceKind: String?): String =
-        InsuranceKind.from(insuranceKind).desc
+    private fun getInsuranceName(insuranceKind: String?): String = InsuranceKind.from(insuranceKind).desc
 
     private fun standardizeUrlPayBank(url: String): String {
         val queryStartIndex = url.indexOf('?')
@@ -49,18 +51,19 @@ class InvoiceStandardisationServiceImpl : InvoiceStandardisationService {
         val baseUrl = url.take(queryStartIndex)
         val query = url.substring(queryStartIndex + 1)
 
-        val encodedQuery = query
-            .split("&")
-            .joinToString("&") { param ->
-                val name = param.substringBefore("=")
-                val value = param.substringAfter("=", "")
+        val encodedQuery =
+            query
+                .split("&")
+                .joinToString("&") { param ->
+                    val name = param.substringBefore("=")
+                    val value = param.substringAfter("=", "")
 
-                if (value.isEmpty()) {
-                    name
-                } else {
-                    "$name=${encodeQueryParam(value)}"
+                    if (value.isEmpty()) {
+                        name
+                    } else {
+                        "$name=${encodeQueryParam(value)}"
+                    }
                 }
-            }
 
         return "$baseUrl?$encodedQuery"
     }
