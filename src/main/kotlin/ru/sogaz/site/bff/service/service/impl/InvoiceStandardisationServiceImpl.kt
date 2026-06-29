@@ -11,7 +11,6 @@ import ru.sogaz.site.ordering.client.model.ResponseInvoicePayPageInfo
 
 @Service
 class InvoiceStandardisationServiceImpl : InvoiceStandardisationService {
-    val log = loggerFor(InvoiceStandardisationServiceImpl::class.java)
 
     override fun standardize(response: ResponseInvoicePayPageInfo): ResponseInvoicePayPageInfo =
         response.apply {
@@ -34,7 +33,6 @@ class InvoiceStandardisationServiceImpl : InvoiceStandardisationService {
         }
 
     private fun getInsuranceName(insuranceKind: String?): String {
-        log.info("insuranceKind before standardize = '{}'", insuranceKind)
         return InsuranceKind.from(insuranceKind).desc
     }
 }
