@@ -1,7 +1,6 @@
 package ru.sogaz.site.bff.service.service.impl
 
 import org.springframework.stereotype.Service
-import ru.sogaz.site.bff.service.cache.CacheWarmup
 import ru.sogaz.site.bff.service.enums.InsuranceKind
 import ru.sogaz.site.bff.service.loggerFor
 import ru.sogaz.site.bff.service.service.InvoiceStandardisationService
@@ -13,6 +12,7 @@ import ru.sogaz.site.ordering.client.model.ResponseInvoicePayPageInfo
 @Service
 class InvoiceStandardisationServiceImpl : InvoiceStandardisationService {
     val log = loggerFor(InvoiceStandardisationServiceImpl::class.java)
+
     override fun standardize(response: ResponseInvoicePayPageInfo): ResponseInvoicePayPageInfo =
         response.apply {
             data?.accounts?.forEach(::standardize)

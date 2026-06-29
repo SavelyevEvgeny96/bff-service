@@ -54,7 +54,6 @@ class OrderingServiceController(
                     saveCard,
                     unifiedId,
                 ).run(invoiceStandardisationServiceImpl::standardize)
-                .run(invoiceStandardisationServiceImpl::standardize)
                 .apply {
                     data?.urlPayBank =
                         data
@@ -79,9 +78,8 @@ class OrderingServiceController(
 
     private fun buildPayerIp(
         originalForwardedForIp: String?,
-        xRealIp: String?
+        xRealIp: String?,
     ): String? {
-
         fun extractIps(raw: String?): List<String> =
             raw
                 ?.split(",")
@@ -97,6 +95,5 @@ class OrderingServiceController(
         return uniqueIps.takeIf { it.isNotEmpty() }?.joinToString(",")
     }
 
-    private fun HttpClientErrorException.Conflict.getResponse(): Response<Any> =
-        objectMapper.readValue(responseBodyAsString)
+    private fun HttpClientErrorException.Conflict.getResponse(): Response<Any> = objectMapper.readValue(responseBodyAsString)
 }
