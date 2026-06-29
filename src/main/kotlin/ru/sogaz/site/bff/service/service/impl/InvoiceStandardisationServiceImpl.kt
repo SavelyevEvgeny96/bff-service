@@ -1,7 +1,9 @@
 package ru.sogaz.site.bff.service.service.impl
 
 import org.springframework.stereotype.Service
+import ru.sogaz.site.bff.service.cache.CacheWarmup
 import ru.sogaz.site.bff.service.enums.InsuranceKind
+import ru.sogaz.site.bff.service.loggerFor
 import ru.sogaz.site.bff.service.service.InvoiceStandardisationService
 import ru.sogaz.site.ordering.client.model.InvoiceAccountData
 import ru.sogaz.site.ordering.client.model.InvoiceMetaAccount
@@ -10,6 +12,7 @@ import ru.sogaz.site.ordering.client.model.ResponseInvoicePayPageInfo
 
 @Service
 class InvoiceStandardisationServiceImpl : InvoiceStandardisationService {
+    val log = loggerFor(InvoiceStandardisationServiceImpl::class.java)
     override fun standardize(response: ResponseInvoicePayPageInfo): ResponseInvoicePayPageInfo =
         response.apply {
             data?.accounts?.forEach(::standardize)
@@ -30,5 +33,8 @@ class InvoiceStandardisationServiceImpl : InvoiceStandardisationService {
             insuranceKind = getInsuranceName(insuranceKind)
         }
 
-    private fun getInsuranceName(insuranceKind: String?): String = InsuranceKind.from(insuranceKind).desc
+    private fun getInsuranceName(insuranceKind: String?): String {
+        log.info("insuranceKind before standardize = '{}'", insuranceKind)
+        return InsuranceKind.from(insuranceKind).desc
+    }
 }

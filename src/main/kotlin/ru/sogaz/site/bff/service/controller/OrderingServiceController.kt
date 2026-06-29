@@ -44,6 +44,7 @@ class OrderingServiceController(
             invoicePayPageApi
                 .getInvoicePayPage(
                     invoiceId,
+                    xRealIp,
                     payQueryParams?.urlToReturn,
                     payQueryParams?.urlToReturnS,
                     payQueryParams?.urlToReturnF,
@@ -66,9 +67,12 @@ class OrderingServiceController(
             throw BusinessException(ex.getResponse().code)
         }
 
-    override fun getStatusInfoPage(invoiceId: UUID): ResponseInvoiceMetaInfo? =
-        invoiceId
-            .run(invoicePayPageApi::getInvoiceMetaInfo)
+    override fun getStatusInfoPage(
+        invoiceId: UUID,
+        payment: Boolean,
+    ): ResponseInvoiceMetaInfo? =
+        invoicePayPageApi
+            .getInvoiceMetaInfo(invoiceId, payment)
             .run(invoiceStandardisationServiceImpl::standardize)
 
     private fun String.replacePayBankHost(): String = replace(DMZ, paySuffix)

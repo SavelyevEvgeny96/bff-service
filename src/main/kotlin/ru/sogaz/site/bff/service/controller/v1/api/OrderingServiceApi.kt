@@ -118,5 +118,12 @@ interface OrderingServiceApi {
     @GetMapping("/pagepayinfo/info/{invoiceId}")
     fun getStatusInfoPage(
         @PathVariable invoiceId: UUID,
+        @Parameter(
+            name = "payment",
+            description = "Признак необходимости вернуть информацию с учетом оплаты. По умолчанию false",
+            required = false,
+            `in` = ParameterIn.QUERY,
+            schema = Schema(type = "boolean", defaultValue = "false"),
+        ) payment: Boolean,
     ): ResponseInvoiceMetaInfo?
 }
