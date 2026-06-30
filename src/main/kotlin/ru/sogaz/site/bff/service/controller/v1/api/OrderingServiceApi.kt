@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import ru.sogaz.site.bff.service.dto.request.PayQueryParams
-import ru.sogaz.site.ordering.client.model.ResponseInvoiceMetaInfo
+import ru.sogaz.site.bff.service.dto.response.BffResponseInvoiceMetaInfo
 import ru.sogaz.site.ordering.client.model.ResponseInvoicePayPageInfo
 import java.util.UUID
 
@@ -125,5 +125,5 @@ interface OrderingServiceApi {
             `in` = ParameterIn.QUERY,
             schema = Schema(type = "boolean", defaultValue = "false"),
         ) payment: Boolean,
-    ): ResponseInvoiceMetaInfo?
+    ): BffResponseInvoiceMetaInfo?
 }
