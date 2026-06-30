@@ -1,6 +1,7 @@
 package ru.sogaz.site.bff.service.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.convertValue
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.RestController
@@ -8,6 +9,7 @@ import org.springframework.web.client.HttpClientErrorException
 import ru.sogaz.site.bff.service.controller.v1.api.OrderingServiceApi
 import ru.sogaz.site.bff.service.dto.request.PayQueryParams
 import ru.sogaz.site.bff.service.dto.response.BffResponseInvoiceMetaInfo
+import ru.sogaz.site.bff.service.service.InformationalMessageService
 import ru.sogaz.site.bff.service.service.impl.InvoiceStandardisationServiceImpl
 import ru.sogaz.site.exceptionStarter.starter.dto.exceptions.BusinessException
 import ru.sogaz.site.ordering.client.api.InvoicePayPageInfoControllerApi
@@ -24,6 +26,7 @@ class OrderingServiceController(
     private val invoicePayPageApi: InvoicePayPageInfoControllerApi,
     private val invoiceStandardisationServiceImpl: InvoiceStandardisationServiceImpl,
     private val objectMapper: ObjectMapper,
+    private val informationalMessageService: InformationalMessageService,
     @param:Value("\${api.ordering.paySuffix}")
     private val paySuffix: String,
 ) : OrderingServiceApi {
@@ -39,7 +42,7 @@ class OrderingServiceController(
         channelSale: String?,
         saveCard: Boolean?,
         unifiedId: String?,
-    ): ResponseInvoicePayPageInfo? =
+    ): Any? =
         try {
             invoicePayPageApi
                 .getInvoicePayPage(
@@ -61,7 +64,7 @@ class OrderingServiceController(
                             ?.toString()
                             ?.replacePayBankHost()
                             ?.let { URI.create(it) }!!
-                }
+                }.withInformationalMessages()
         } catch (ex: HttpClientErrorException.Conflict) {
             throw BusinessException(ex.getResponse().code)
         }
@@ -73,6 +76,19 @@ class OrderingServiceController(
         invoicePayPageApi
             .getInvoiceMetaInfo(invoiceId, payment)
             .run(invoiceStandardisationServiceImpl::standardize)
+
+    private fun ResponseInvoicePayPageInfo.withInformationalMessages(): Map<String, Any?> {
+        val response = objectMapper.convertValue<MutableMap<String, Any?>>(this)
+        val messages = informationalMessageService.getMessages(true)
+
+        if (messages.isNotEmpty()) {
+            @Suppress("UNCHECKED_CAST")
+            val data = response["data"] as? MutableMap<String, Any?>
+            data?.put("message", messages)
+        }
+
+        return response
+    }
 
     private fun String.replacePayBankHost(): String = replace(DMZ, paySuffix)
 
