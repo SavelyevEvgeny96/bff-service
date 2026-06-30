@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import ru.sogaz.site.bff.service.dto.request.PayQueryParams
 import ru.sogaz.site.bff.service.dto.response.BffResponseInvoiceMetaInfo
-import ru.sogaz.site.ordering.client.model.ResponseInvoicePayPageInfo
 import java.util.UUID
 
 /**
@@ -108,7 +107,7 @@ interface OrderingServiceApi {
         channelSale: String?,
         saveCard: Boolean?,
         unifiedId: String?,
-    ): ResponseInvoicePayPageInfo?
+    ): Any?
 
     /**
      * Получение информации для отображения на платежной странице.
