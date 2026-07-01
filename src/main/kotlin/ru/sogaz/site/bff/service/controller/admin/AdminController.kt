@@ -1,5 +1,12 @@
 package ru.sogaz.site.bff.service.controller.admin
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
@@ -30,6 +37,10 @@ import java.util.UUID
 /**
  * Админские ручки управления исключениями по оплатам.
  */
+@Tag(
+    name = "Admin API",
+    description = "Админские методы управления платежными настройками и информационными сообщениями",
+)
 @RestController
 @RequestMapping("/admin")
 class AdminController(
@@ -67,6 +78,20 @@ class AdminController(
     /**
      * Создать информационное сообщение для отображения клиенту на платежной странице.
      */
+    @Operation(
+        summary = "Создание информационного сообщения",
+        description = "Создает информационное сообщение, которое может отображаться клиенту на платежной странице.",
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                description = "Информационное сообщение создано",
+                content = [Content(schema = Schema(implementation = CreateInformationalMessageResponse::class))],
+            ),
+            ApiResponse(responseCode = "422", description = "Ошибка валидации входящих параметров"),
+        ],
+    )
     @PostMapping("/informational_message")
     @ResponseStatus(HttpStatus.CREATED)
     fun createInformationalMessage(
@@ -83,8 +108,28 @@ class AdminController(
     /**
      * Изменить информационное сообщение для отображения клиенту на платежной странице.
      */
+    @Operation(
+        summary = "Изменение информационного сообщения",
+        description = "Изменяет информационное сообщение по идентификатору записи.",
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Информационное сообщение изменено",
+                content = [Content(schema = Schema(implementation = CreateInformationalMessageResponse::class))],
+            ),
+            ApiResponse(responseCode = "409", description = "Информационное сообщение не найдено"),
+            ApiResponse(responseCode = "422", description = "Ошибка валидации входящих параметров"),
+        ],
+    )
     @PatchMapping("/informational_message/{messageId}")
     fun updateInformationalMessage(
+        @Parameter(
+            description = "Идентификатор информационного сообщения",
+            required = true,
+            schema = Schema(type = "string", format = "uuid"),
+        )
         @PathVariable messageId: UUID,
         @RequestBody @Valid request: UpdateInformationalMessageRequest,
     ): Response<CreateInformationalMessageResponse> {
@@ -99,8 +144,26 @@ class AdminController(
     /**
      * Получить список информационных сообщений для отображения клиенту на платежной странице.
      */
+    @Operation(
+        summary = "Получение списка информационных сообщений",
+        description = "Возвращает список информационных сообщений с опциональной фильтрацией по признаку отображения.",
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Список информационных сообщений получен",
+                content = [Content(schema = Schema(implementation = InformationalMessagesResponse::class))],
+            ),
+        ],
+    )
     @GetMapping("/informational_message")
     fun getInformationalMessages(
+        @Parameter(
+            description = "Признак доступности сообщения для отображения",
+            required = false,
+            schema = Schema(type = "boolean"),
+        )
         @RequestParam(required = false) checkDisplay: Boolean?,
     ): Response<InformationalMessagesResponse> {
         val messages = informationalMessageService.getMessages(checkDisplay)
