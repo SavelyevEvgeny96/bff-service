@@ -12,6 +12,7 @@ import ru.sogaz.site.exceptionStarter.starter.dto.exceptions.BusinessException
 import ru.sogaz.site.exceptionStarter.starter.dto.exceptions.InnerException
 import ru.sogaz.site.filterStarter.services.RequestInfo
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.UUID
 
@@ -37,8 +38,8 @@ class InformationalMessageServiceImpl(
                 InformationalMessageClient(
                     type = requireNotNull(request.type).trim(),
                     description = requireNotNull(request.description).trim(),
-                    displayWith = requireNotNull(request.displayWith),
-                    displayTo = requireNotNull(request.displayTo),
+                    displayWith = requireNotNull(request.displayWith).toUtcLocalDateTime(),
+                    displayTo = requireNotNull(request.displayTo).toUtcLocalDateTime(),
                     checkDisplay = true,
                 ),
             )
@@ -60,8 +61,8 @@ class InformationalMessageServiceImpl(
 
         request.type?.trim()?.let { message.type = it }
         request.description?.trim()?.let { message.description = it }
-        request.displayWith?.let { message.displayWith = it }
-        request.displayTo?.let { message.displayTo = it }
+        request.displayWith?.let { message.displayWith = it.toUtcLocalDateTime() }
+        request.displayTo?.let { message.displayTo = it.toUtcLocalDateTime() }
         request.checkDisplay?.let { message.checkDisplay = it }
 
         val saved = repository.saveAndFlush(message)
@@ -99,4 +100,6 @@ class InformationalMessageServiceImpl(
 
     private fun InformationalMessageClient.contains(currentDateTime: LocalDateTime): Boolean =
         !currentDateTime.isBefore(displayWith) && !currentDateTime.isAfter(displayTo)
+
+    private fun OffsetDateTime.toUtcLocalDateTime(): LocalDateTime = withOffsetSameInstant(ZoneOffset.UTC).toLocalDateTime()
 }
