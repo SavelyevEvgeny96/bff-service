@@ -1,9 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      id: backend-002-create-informational-messages-client
-      author: OpenAI
-      changes:
-        - tagDatabase:
-            tag: backend-002-create-informational-messages-client
-  - include:
-      file: db.changelog/v1.0.0/2026-06-30/DATA/add_informational_messages_client_table.sql
