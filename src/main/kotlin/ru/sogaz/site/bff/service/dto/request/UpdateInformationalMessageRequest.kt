@@ -1,6 +1,7 @@
 package ru.sogaz.site.bff.service.dto.request
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import jakarta.validation.constraints.NotNull
 import ru.sogaz.site.bff.service.constraint.ValidInformationalMessagePeriod
 import ru.sogaz.site.bff.service.constraint.ValidInformationalMessageType
 import ru.sogaz.site.bff.service.constraint.ValidOptionalNotBlank
@@ -18,11 +19,13 @@ data class UpdateInformationalMessageRequest(
     /** Описание уведомления. */
     @field:ValidOptionalNotBlank
     val description: String?,
-    /** Дата и время начала отображения в формате yyyy-MM-dd HH:mm:ss.SSSSS. */
-    @field:JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSSS")
+    /** Дата и время начала отображения в формате ISO 8601. */
+    @field:NotNull(message = "{informational.message.display-with.required}")
+    @field:JsonFormat(shape = JsonFormat.Shape.STRING)
     override val displayWith: OffsetDateTime?,
-    /** Дата и время окончания отображения в формате yyyy-MM-dd HH:mm:ss.SSSSS. */
-    @field:JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSSS")
+    /** Дата и время окончания отображения в формате ISO 8601. */
+    @field:NotNull(message = "{informational.message.display-to.required}")
+    @field:JsonFormat(shape = JsonFormat.Shape.STRING)
     override val displayTo: OffsetDateTime?,
     /** Признак отображения сообщения. */
     val checkDisplay: Boolean?,
