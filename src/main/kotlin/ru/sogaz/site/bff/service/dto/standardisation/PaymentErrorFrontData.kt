@@ -131,6 +131,11 @@ enum class PaymentErrorRule(
         )
 
     companion object {
+        private val ignoredSourceErrorTexts: Set<String> =
+            setOf(
+                "Таймаут при подтверждении оферты",
+            ).mapTo(mutableSetOf(), ::normalize)
+
         private val rulesByNormalizedSourceText: Map<String, PaymentErrorRule> =
             buildRulesMap()
 
@@ -139,7 +144,14 @@ enum class PaymentErrorRule(
                 return null
             }
 
-            return rulesByNormalizedSourceText[normalize(errorText)]
+            val normalizedErrorText = normalize(errorText)
+
+            // Эти ошибки не должны передаваться на фронт
+            if (normalizedErrorText in ignoredSourceErrorTexts) {
+                return null
+            }
+
+            return rulesByNormalizedSourceText[normalizedErrorText]
                 ?.toFrontData()
                 ?: defaultError()
         }
