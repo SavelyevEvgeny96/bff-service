@@ -25,7 +25,7 @@ class InvoiceStandardisationServiceImpl(
                     ?.urlPayBank
                     ?.toString()
                     ?.let(::standardizeUrlPayBank)
-                    ?.let(URI::create)!!
+                    ?.let(URI::create)
         }
 
     override fun standardize(response: ResponseInvoiceMetaInfo): BffResponseInvoiceMetaInfo =

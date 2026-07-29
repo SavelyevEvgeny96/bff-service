@@ -63,7 +63,7 @@ class OrderingServiceController(
                             ?.urlPayBank
                             ?.toString()
                             ?.replacePayBankHost()
-                            ?.let { URI.create(it) }!!
+                            ?.let { URI.create(it) }
                 }.withInformationalMessages()
         } catch (ex: HttpClientErrorException.Conflict) {
             throw BusinessException(ex.getResponse().code)
