@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.convertValue
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.HttpClientErrorException
@@ -39,16 +38,15 @@ class OrderingServiceController(
         const val DMZ = "gateway-site-dmz"
     }
 
-    override fun getQrPaymentRikvisit(request: InvoicePaymentQrRequest): Any? =
+    override fun getQrPaymentRequisite(request: InvoicePaymentQrRequest): Any? =
         try {
             invoicePaymentQrApi
-                .getPaymentQr(request)
+                .getQrPaymentRicvisit(request)
         } catch (ex: HttpClientErrorException) {
             ResponseEntity.status(ex.statusCode).body(ex.toResponse())
         }
 
-    private fun HttpClientErrorException.toResponse(): Response<Any> =
-        objectMapper.readValue(responseBodyAsString)
+    private fun HttpClientErrorException.toResponse(): Response<Any> = objectMapper.readValue(responseBodyAsString)
 
     override fun getInfoPage(
         originalForwardedForIp: String?,
@@ -127,6 +125,5 @@ class OrderingServiceController(
         return uniqueIps.takeIf { it.isNotEmpty() }?.joinToString(",")
     }
 
-    private fun HttpClientErrorException.Conflict.getResponse(): Response<Any> =
-        objectMapper.readValue(responseBodyAsString)
+    private fun HttpClientErrorException.Conflict.getResponse(): Response<Any> = objectMapper.readValue(responseBodyAsString)
 }

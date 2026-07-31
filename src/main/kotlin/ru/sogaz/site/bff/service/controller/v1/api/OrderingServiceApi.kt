@@ -46,7 +46,7 @@ interface OrderingServiceApi {
         description = "Запрос для получения ссылки на оплату QRC. Синхронный",
     )
     @PostMapping("/pagepayinfo/payqr")
-    fun getQrPaymentRikvisit(
+    fun getQrPaymentRequisite(
         @RequestBody request: InvoicePaymentQrRequest,
     ): Any?
 
