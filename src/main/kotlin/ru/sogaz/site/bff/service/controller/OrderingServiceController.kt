@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.convertValue
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.HttpClientErrorException
 import ru.sogaz.site.bff.service.controller.v1.api.OrderingServiceApi
@@ -13,6 +15,8 @@ import ru.sogaz.site.bff.service.service.InformationalMessageService
 import ru.sogaz.site.bff.service.service.impl.InvoiceStandardisationServiceImpl
 import ru.sogaz.site.exceptionStarter.starter.dto.exceptions.BusinessException
 import ru.sogaz.site.ordering.client.api.InvoicePayPageInfoControllerApi
+import ru.sogaz.site.ordering.client.api.InvoicePaymentQrControllerApi
+import ru.sogaz.site.ordering.client.model.InvoicePaymentQrRequest
 import ru.sogaz.site.ordering.client.model.ResponseInvoicePayPageInfo
 import ru.sogaz.siter.models.resonses.Response
 import java.net.URI
@@ -23,6 +27,7 @@ import java.util.UUID
  */
 @RestController
 class OrderingServiceController(
+    private val invoicePaymentQrApi: InvoicePaymentQrControllerApi,
     private val invoicePayPageApi: InvoicePayPageInfoControllerApi,
     private val invoiceStandardisationServiceImpl: InvoiceStandardisationServiceImpl,
     private val objectMapper: ObjectMapper,
@@ -33,6 +38,17 @@ class OrderingServiceController(
     companion object {
         const val DMZ = "gateway-site-dmz"
     }
+
+    override fun getQrPaymentRikvisit(request: InvoicePaymentQrRequest): Any? =
+        try {
+            invoicePaymentQrApi
+                .getPaymentQr(request)
+        } catch (ex: HttpClientErrorException) {
+            ResponseEntity.status(ex.statusCode).body(ex.toResponse())
+        }
+
+    private fun HttpClientErrorException.toResponse(): Response<Any> =
+        objectMapper.readValue(responseBodyAsString)
 
     override fun getInfoPage(
         originalForwardedForIp: String?,
@@ -111,5 +127,6 @@ class OrderingServiceController(
         return uniqueIps.takeIf { it.isNotEmpty() }?.joinToString(",")
     }
 
-    private fun HttpClientErrorException.Conflict.getResponse(): Response<Any> = objectMapper.readValue(responseBodyAsString)
+    private fun HttpClientErrorException.Conflict.getResponse(): Response<Any> =
+        objectMapper.readValue(responseBodyAsString)
 }
