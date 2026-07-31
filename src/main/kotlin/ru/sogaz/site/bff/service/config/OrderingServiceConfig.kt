@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.sogaz.site.bff.service.properties.OrderingApiProperties
 import ru.sogaz.site.ordering.client.api.InvoicePayPageInfoControllerApi
+import ru.sogaz.site.ordering.client.api.InvoicePaymentQrControllerApi
 import ru.sogaz.site.ordering.client.invoker.ApiClient
 
 @Configuration
@@ -15,4 +16,10 @@ class OrderingServiceConfig(
         ApiClient()
             .apply { basePath = orderingApiProperties.basePath }
             .run(::InvoicePayPageInfoControllerApi)
+
+    @Bean
+    fun InvoicePaymentQrControllerApi(): InvoicePaymentQrControllerApi =
+        ApiClient()
+            .apply { basePath = orderingApiProperties.basePath }
+            .run(::InvoicePaymentQrControllerApi)
 }
