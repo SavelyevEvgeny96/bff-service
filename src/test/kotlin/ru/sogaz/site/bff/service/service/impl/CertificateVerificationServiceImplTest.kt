@@ -24,7 +24,7 @@ class CertificateVerificationServiceImplTest {
     @Test
     fun `saves verification using invoice id from long link`() {
         val invoiceId = UUID.randomUUID()
-        val request = CertificateVerificationRequest(shortLink = "Dpa7mUHB", certMin = true)
+        val request = CertificateVerificationRequest(shortLink = "Dpa7mUHB", invoiceId = null, certMin = true)
         val entity = CertificateVerification(invoiceId = invoiceId, certMin = true)
         whenever(shortLinksApi.redirectToLongUrl("Dpa7mUHB", false))
             .thenReturn(mapOf("url" to "https://example.sogaz.ru/p/$invoiceId?source=short"))
@@ -38,8 +38,22 @@ class CertificateVerificationServiceImplTest {
     }
 
     @Test
+    fun `saves verification by invoice id without resolving short link`() {
+        val invoiceId = UUID.randomUUID()
+        val request = CertificateVerificationRequest(shortLink = null, invoiceId = invoiceId.toString(), certMin = false)
+        val entity = CertificateVerification(invoiceId = invoiceId, certMin = false)
+        whenever(mapper.toEntity(invoiceId, false)).thenReturn(entity)
+
+        service.save(request)
+
+        verify(shortLinksApi, never()).redirectToLongUrl(any(), any())
+        verify(mapper).toEntity(invoiceId, false)
+        verify(repository).saveAndFlush(entity)
+    }
+
+    @Test
     fun `does not save when long link has no payment invoice id`() {
-        val request = CertificateVerificationRequest(shortLink = "invalid", certMin = false)
+        val request = CertificateVerificationRequest(shortLink = "invalid", invoiceId = null, certMin = false)
         whenever(shortLinksApi.redirectToLongUrl("invalid", false))
             .thenReturn(mapOf("url" to "https://example.sogaz.ru/instructions"))
 

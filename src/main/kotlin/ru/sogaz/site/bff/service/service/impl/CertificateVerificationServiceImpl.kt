@@ -25,12 +25,16 @@ class CertificateVerificationServiceImpl(
 
     @Transactional
     override fun save(request: CertificateVerificationRequest) {
-        val shortLink = requireNotNull(request.shortLink)
-        val response = shortLinkControllerApi.redirectToLongUrl(shortLink, false)
-        val url = (response as? Map<*, *>)?.get("url") as? String
-        val invoiceId = url?.extractInvoiceId() ?: invalidShortLinkResponse()
+        val invoiceId = request.invoiceId?.takeIf { it.isNotBlank() }?.let(UUID::fromString) ?: resolveInvoiceId(request)
 
         repository.saveAndFlush(mapper.toEntity(invoiceId, requireNotNull(request.certMin)))
+    }
+
+    private fun resolveInvoiceId(request: CertificateVerificationRequest): UUID {
+        val shortLink = requireNotNull(request.shortLink).trim()
+        val response = shortLinkControllerApi.redirectToLongUrl(shortLink, false)
+        val url = (response as? Map<*, *>)?.get("url") as? String
+        return url?.extractInvoiceId() ?: invalidShortLinkResponse()
     }
 
     private fun String.extractInvoiceId(): UUID? =
