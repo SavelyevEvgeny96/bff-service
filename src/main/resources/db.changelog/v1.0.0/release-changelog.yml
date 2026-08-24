@@ -4,3 +4,5 @@ databaseChangeLog:
       file: db.changelog\v1.0.0\2026-03-03\cumulative-changelog.yml
   - include:
       file: db.changelog/v1.0.0/2026-06-30/cumulative-changelog.yml
+  - include:
+      file: db.changelog/v1.0.0/2026-08-24/cumulative-changelog.yml
