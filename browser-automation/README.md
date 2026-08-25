@@ -36,20 +36,40 @@ cd browser-automation
 mvn clean verify
 ```
 
-Получится автономный `target/browser-automation.jar`. Перед первым UI-запуском установите Chromium той же версии Playwright, которая зафиксирована в `pom.xml`:
+Получится автономный `target/browser-automation.jar`. Перед первым UI-запуском установите Chromium той же версии Playwright, которая зафиксирована в `pom.xml`.
+
+### Установка Chromium из PowerShell
+
+Находясь в каталоге `browser-automation`, выполните **одну** Maven-команду:
 
 ```powershell
-mvn dependency:build-classpath "-Dmdep.outputFile=target\classpath.txt"
-$cp = Get-Content target\classpath.txt
-java -cp $cp com.microsoft.playwright.CLI install chromium
+..\mvnw.cmd -f pom.xml exec:java@install-browser
 ```
 
-Это официальный Java CLI, включённый в выбранную зависимость Playwright. После изменения версии повторите установку.
+Если установлен глобальный Maven, эквивалентная команда выглядит так:
+
+```powershell
+mvn -f pom.xml exec:java@install-browser
+```
+
+Execution `install-browser` уже настроен в `pom.xml`: он запускает `com.microsoft.playwright.CLI` с двумя отдельными аргументами `install` и `chromium`. Поэтому не нужно вручную строить classpath или присваивать `$cp`.
+
+> Не вставляйте `$cp = Get-Content ...` и `java -cp ...` в поле **Run → Maven** IntelliJ IDEA. Это команды PowerShell, а IntelliJ передаст их Maven как цели, что приводит к сообщению «Ошибка в синтаксисе команды». Если всё же используется старый трёхкомандный вариант, каждую строку следует запускать отдельно именно в PowerShell, а не объединять в одну строку Maven.
+
+Для Maven Run Configuration в IntelliJ IDEA укажите:
+
+* **Working directory:** `$PROJECT_DIR$/browser-automation`;
+* **Command line:** `exec:java@install-browser`.
+
+IDEA самостоятельно добавит `mvnw.cmd`, `-f pom.xml`, свой event listener и остальные служебные параметры. Не дублируйте их в поле **Command line**.
+
+Это официальный Java CLI, включённый в выбранную зависимость Playwright. После изменения версии Playwright повторите установку Chromium.
 
 ## Явный запуск
 
 ```powershell
-mvn exec:java
+..\mvnw.cmd -f pom.xml exec:java@run-automation
+mvn -f pom.xml exec:java@run-automation
 java -jar target/browser-automation.jar
 java -jar target/browser-automation.jar --scenario=open-demo
 java -jar target/browser-automation.jar --scenario=open-demo,multipage-demo

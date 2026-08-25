@@ -17,7 +17,25 @@
     <plugin><groupId>org.jetbrains.kotlin</groupId><artifactId>kotlin-maven-plugin</artifactId><version>${kotlin.version}</version><executions><execution><id>compile</id><goals><goal>compile</goal></goals></execution><execution><id>test-compile</id><goals><goal>test-compile</goal></goals></execution></executions><configuration><jvmTarget>21</jvmTarget></configuration></plugin>
     <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.14.0</version><configuration><release>21</release></configuration></plugin>
     <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>3.5.3</version><configuration><useModulePath>false</useModulePath></configuration></plugin>
-    <plugin><groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId><version>3.5.0</version><configuration><mainClass>automation.MainKt</mainClass></configuration></plugin>
+    <plugin>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>exec-maven-plugin</artifactId>
+      <version>3.5.0</version>
+      <executions>
+        <execution>
+          <id>run-automation</id>
+          <configuration><mainClass>automation.MainKt</mainClass></configuration>
+        </execution>
+        <execution>
+          <id>install-browser</id>
+          <configuration>
+            <mainClass>com.microsoft.playwright.CLI</mainClass>
+            <arguments><argument>install</argument><argument>chromium</argument></arguments>
+          </configuration>
+        </execution>
+      </executions>
+      <configuration><mainClass>automation.MainKt</mainClass></configuration>
+    </plugin>
     <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-shade-plugin</artifactId><version>3.6.0</version><executions><execution><phase>package</phase><goals><goal>shade</goal></goals><configuration><createDependencyReducedPom>false</createDependencyReducedPom><transformers><transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"><mainClass>automation.MainKt</mainClass></transformer></transformers></configuration></execution></executions></plugin>
   </plugins></build>
 </project>
