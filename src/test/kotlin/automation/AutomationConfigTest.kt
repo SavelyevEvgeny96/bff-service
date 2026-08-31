@@ -8,37 +8,30 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class AutomationConfigTest {
-    @TempDir
-    lateinit var tempDir: Path
+    @TempDir lateinit var tempDir: Path
 
     @Test
-    fun `parses required and optional arguments`() {
+    fun `parses paths and timing settings`() {
         val source = tempDir.resolve("source.txt").also { it.writeText("test") }
-        val output = tempDir.resolve("result.txt")
-
-        val config = AutomationConfig.fromArgs(
-            arrayOf(
-                "--source", source.toString(),
-                "--output", output.toString(),
-                "--switches", "5",
-                "--min-delay-ms", "10",
-                "--max-delay-ms", "20",
-                "--notepad-wait-ms", "30",
-            ),
-        )
+        val config = AutomationConfig.fromArgs(arrayOf(
+            "--source", source.toString(), "--output", tempDir.resolve("result.txt").toString(),
+            "--switches", "5", "--min-switch-delay-ms", "10", "--max-switch-delay-ms", "20",
+            "--min-duration-minutes", "180", "--max-duration-minutes", "300", "--typo-percent", "3.5",
+        ))
 
         assertEquals(5, config.switches)
-        assertEquals(10, config.minDelayMs)
-        assertEquals(20, config.maxDelayMs)
-        assertEquals(30, config.notepadWaitMs)
+        assertEquals(10, config.minSwitchDelayMs)
+        assertEquals(20, config.maxSwitchDelayMs)
+        assertEquals(180, config.minDurationMinutes)
+        assertEquals(300, config.maxDurationMinutes)
+        assertEquals(3.5, config.typoPercent)
     }
 
     @Test
-    fun `rejects missing source file`() {
+    fun `rejects an empty source`() {
+        val source = tempDir.resolve("empty.txt").also { it.writeText("") }
         assertFailsWith<IllegalArgumentException> {
-            AutomationConfig.fromArgs(
-                arrayOf("--source", tempDir.resolve("missing.txt").toString(), "--output", "result.txt"),
-            )
+            AutomationConfig.fromArgs(arrayOf("--source", source.toString(), "--output", "result.txt"))
         }
     }
 }

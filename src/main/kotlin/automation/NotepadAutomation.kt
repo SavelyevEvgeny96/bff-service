@@ -1,6 +1,7 @@
 package automation
 
 import java.nio.file.Files
+import kotlin.math.roundToLong
 import kotlin.random.Random
 
 class NotepadAutomation(
@@ -8,27 +9,45 @@ class NotepadAutomation(
     private val random: Random = Random.Default,
 ) {
     fun run(config: AutomationConfig) {
-        val sourceText = Files.readString(config.source)
-        // Creating the file prevents Notepad from showing a blocking "create file" dialog.
-        if (Files.notExists(config.output)) {
-            Files.createFile(config.output)
-        }
+        val characters = Files.readString(config.source).codePoints().toArray().map { Character.toString(it) }
+        if (Files.notExists(config.output)) Files.createFile(config.output)
 
         repeat(config.switches) {
-            desktop.waitFor(randomDelay(config))
+            desktop.waitFor(randomLong(config.minSwitchDelayMs, config.maxSwitchDelayMs))
             desktop.switchWindow()
         }
 
-        desktop.putOnClipboard(sourceText)
         desktop.openNotepad(config.output)
         desktop.waitFor(config.notepadWaitMs)
-        desktop.paste()
+        desktop.clearDocument()
+
+        val targetDurationMs = randomLong(config.minDurationMinutes, config.maxDurationMinutes) * 60_000
+        val delays = distributedDelays(characters.size, targetDurationMs)
+        val possibleMistakes = characters.filter { it.firstOrNull()?.isLetter() == true }.ifEmpty { listOf("x") }
+        characters.forEachIndexed { index, character ->
+            if (random.nextDouble(100.0) < config.typoPercent) {
+                desktop.typeText(possibleMistakes.random(random))
+                desktop.waitFor(randomLong(80, 450))
+                desktop.backspace()
+                desktop.waitFor(randomLong(100, 700))
+            }
+            desktop.typeText(character)
+            desktop.waitFor(delays[index])
+            if ((index + 1) % config.saveEveryCharacters == 0) desktop.save()
+        }
+
         desktop.save()
-        desktop.waitFor(300)
+        desktop.waitFor(500)
         desktop.closeWindow()
     }
 
-    private fun randomDelay(config: AutomationConfig): Long =
-        if (config.minDelayMs == config.maxDelayMs) config.minDelayMs
-        else random.nextLong(config.minDelayMs, config.maxDelayMs + 1)
+    private fun distributedDelays(count: Int, totalMs: Long): LongArray {
+        val weights = DoubleArray(count) { random.nextDouble(0.55, 1.45) }
+        val weightSum = weights.sum()
+        val delays = LongArray(count) { (totalMs * weights[it] / weightSum).roundToLong() }
+        delays[delays.lastIndex] += totalMs - delays.sum()
+        return delays
+    }
+
+    private fun randomLong(min: Long, max: Long): Long = if (min == max) min else random.nextLong(min, max + 1)
 }
