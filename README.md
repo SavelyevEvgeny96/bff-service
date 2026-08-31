@@ -1,93 +1,131 @@
-# bff-service
+# Notepad Window Automation
 
+Windows-приложение на Kotlin/JVM, которое от имени **обычного локального пользователя** переключает окна, открывает Блокнот и визуально переносит текст из одного файла в другой по одному символу. Между символами создаются случайные задержки; иногда программа вводит лишний символ, делает паузу, удаляет его клавишей Backspace и продолжает работу. По умолчанию перенос занимает случайное время от 3 до 5 часов.
 
+> Важно: это не служба и не скрытый «захват процесса Windows». Программа управляет клавиатурой текущего интерактивного рабочего стола через стандартный `java.awt.Robot`. Права администратора не нужны. Она не сможет управлять окном, запущенным от администратора, экраном UAC, заблокированным сеансом или другим пользовательским сеансом.
 
-## Getting started
+## Что произойдёт после запуска
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+1. Проверяются Windows, наличие графического сеанса, исходный файл и настройки.
+2. Выполняется заданное количество `Alt+Tab` со случайными паузами.
+3. Запускается `notepad.exe <полный-путь-к-результату>`.
+4. Существующий текст результата выделяется и удаляется.
+5. Исходный UTF-8 текст появляется в Блокноте **по одному символу**, а не вставляется целиком.
+6. С заданной вероятностью появляется случайная опечатка, затем Backspace и правильный символ.
+7. Документ периодически сохраняется через `Ctrl+S`, в конце сохраняется ещё раз и Блокнот закрывается через `Alt+F4`.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+Для поддержки русского и другого Unicode каждый отдельный символ передаётся через буфер обмена и `Ctrl+V`: `Robot` не умеет надёжно генерировать произвольные Unicode-клавиши. Визуально текст появляется по одному символу с человеческими паузами, но это **не физическое нажатие отдельной буквенной клавиши** и не экранная клавиатура Windows.
 
-## Add your files
+## Требования
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+- Windows 10 или Windows 11;
+- обычная локальная учётная запись (администратор не требуется);
+- открытый и разблокированный рабочий стол;
+- JDK 21 (`java -version`);
+- доступ к Maven Central при первой сборке;
+- исходный `.txt` в UTF-8;
+- Блокнот и все окна, с которыми взаимодействует программа, должны быть запущены с тем же уровнем прав пользователя.
 
+Во время сценария не нажимайте клавиши, не переключайте окна и не блокируйте компьютер. Иначе ввод может попасть не в Блокнот. Отключите сон на время 3–5 часов: **Параметры → Система → Питание → Экран и спящий режим**.
+
+## Подготовка файлов и путей
+
+Создайте отдельную папку, например:
+
+```text
+C:\Users\Ivan\Documents\notepad-automation\
+├── source.txt
+└── result.txt       (может отсутствовать — программа создаст его)
 ```
-cd existing_repo
-git remote add origin https://gitlab.sogaz.ru/web/backend/bff-service.git
-git branch -M master
-git push -uf origin master
+
+Правила:
+
+- `source.txt` должен существовать, быть непустым и отличаться от `result.txt`;
+- папка для `result.txt` должна существовать заранее;
+- используйте абсолютные пути и кавычки, особенно если в пути есть пробелы;
+- приложение полностью заменит прежнее содержимое `result.txt`;
+- сначала сделайте пробный запуск на копиях файлов.
+
+Пример корректных путей PowerShell:
+
+```powershell
+--source "C:\Users\Ivan\Documents\notepad-automation\source.txt"
+--output "C:\Users\Ivan\Documents\notepad-automation\result.txt"
 ```
 
-## Integrate with your tools
+## Сборка
 
-- [ ] [Set up project integrations](https://gitlab.sogaz.ru/web/backend/bff-service/-/settings/integrations)
+Откройте PowerShell в корне проекта:
 
-## Collaborate with your team
+```powershell
+.\mvnw.cmd clean test
+.\mvnw.cmd package
+```
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+Готовый файл: `target\notepad-window-automation.jar`.
 
-## Test and Deploy
+## Рекомендуемый запуск на 3–5 часов
 
-Use the built-in continuous integration in GitLab.
+```powershell
+java -jar .\target\notepad-window-automation.jar `
+  --source "C:\Users\Ivan\Documents\notepad-automation\source.txt" `
+  --output "C:\Users\Ivan\Documents\notepad-automation\result.txt" `
+  --switches 3 `
+  --min-switch-delay-ms 500 `
+  --max-switch-delay-ms 2000 `
+  --notepad-wait-ms 2000 `
+  --min-duration-minutes 180 `
+  --max-duration-minutes 300 `
+  --typo-percent 2.0 `
+  --save-every-characters 500
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+После Enter не трогайте клавиатуру и мышь. Программа случайно выберет длительность между 180 и 300 минутами и распределит её между символами. Опечатки и исправления добавляют небольшое время сверх выбранной длительности, поэтому фактический запуск может оказаться немного дольше 5 часов.
 
-***
+## Все настройки
 
-# Editing this README
+| Параметр | По умолчанию | Назначение |
+|---|---:|---|
+| `--source` | обязательный | Абсолютный путь к непустому исходному UTF-8 файлу. |
+| `--output` | обязательный | Абсолютный путь к результату; родительская папка должна существовать. |
+| `--switches` | `3` | Число переключений `Alt+Tab` перед открытием Блокнота; `0` отключает их. |
+| `--min-switch-delay-ms` | `500` | Минимальная пауза перед `Alt+Tab`, мс. |
+| `--max-switch-delay-ms` | `1500` | Максимальная пауза перед `Alt+Tab`, мс. |
+| `--notepad-wait-ms` | `1500` | Ожидание запуска Блокнота; на медленном ПК поставьте `3000`–`5000`. |
+| `--min-duration-minutes` | `180` | Минимальное время распределённых пауз печати. |
+| `--max-duration-minutes` | `300` | Максимальное время распределённых пауз печати. |
+| `--typo-percent` | `2.0` | Вероятность опечатки перед символом, от `0` до `25`. |
+| `--save-every-characters` | `500` | Период автосохранения в символах. |
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+Минимум не может превышать максимум. Для короткой проверки используйте `--min-duration-minutes 0 --max-duration-minutes 0 --typo-percent 0`. При очень коротком исходнике и длительности 3–5 часов паузы между буквами будут неестественно большими; для реалистичной скорости нужен большой текст.
 
-## Suggestions for a good README
+## Безопасный пробный запуск
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+```powershell
+java -jar .\target\notepad-window-automation.jar `
+  --source "C:\Temp\source-test.txt" `
+  --output "C:\Temp\result-test.txt" `
+  --switches 0 `
+  --notepad-wait-ms 3000 `
+  --min-duration-minutes 0 `
+  --max-duration-minutes 0 `
+  --typo-percent 5
+```
 
-## Name
-Choose a self-explaining name for your project.
+После теста сравните файлы:
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+```powershell
+$source = Get-Content "C:\Temp\source-test.txt" -Raw
+$result = Get-Content "C:\Temp\result-test.txt" -Raw
+$source -eq $result
+```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+Ожидаемый результат — `True`.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## Ограничения и остановка
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- Для аварийной остановки вернитесь в окно PowerShell и нажмите `Ctrl+C`; если ввод мешает, сначала закройте процесс `java.exe` через Диспетчер задач.
+- Блокировка Windows, UAC, Remote Desktop disconnect и переход в сон прервут GUI-автоматизацию.
+- Программа работает только с окнами текущего пользователя и намеренно не обходит ограничения безопасности Windows.
+- Если символы попадают не туда, увеличьте `--notepad-wait-ms`, поставьте `--switches 0` и не меняйте активное окно после старта.
+- Итог всегда проверяйте сравнением файлов: GUI-автоматизация зависит от фокуса окна и не даёт той же гарантии, что обычное файловое копирование.
