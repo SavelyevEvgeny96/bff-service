@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: backend-004-create-redirect-url-auth
+      author: Savelyev evgeny
+      changes:
+        - tagDatabase:
+            tag: backend-004-create-redirect-url-auth
+  - include:
+      file: db.changelog/v1.0.0/2026-09-11/DATA/add_redirect_url_auth_table.sql

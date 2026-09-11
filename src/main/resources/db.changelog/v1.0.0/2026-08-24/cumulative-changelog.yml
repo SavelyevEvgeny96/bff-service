@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: backend-003-create-certificate-verification
+      author: OpenAI
+      changes:
+        - tagDatabase:
+            tag: backend-003-create-certificate-verification
+  - include:
+      file: db.changelog/v1.0.0/2026-08-24/DATA/add_certificate_verification_table.sql
